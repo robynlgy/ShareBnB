@@ -4,6 +4,7 @@ from datetime import datetime
 
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity,JWTManager
 
 DEFAULT_IMAGE_URL = "https://www.publicdomainpictures.net/pictures/280000/nahled/not-found-image-15383864787lu.jpg"
 
@@ -86,14 +87,15 @@ class User(db.Model):
             image_url=image_url,
         )
 
+        token = create_access_token(identity=username)
+
         db.session.add(user)
-        return user
+        return token
 
     @classmethod
     def authenticate(cls, username, password):
         """Find user with `username` and `password`.
 
-        This is a class method (call it on the class, not an individual user.)
         It searches for a user whose password hash matches this password
         and, if it finds such a user, returns that user object.
 
@@ -105,7 +107,8 @@ class User(db.Model):
         if user:
             is_auth = bcrypt.check_password_hash(user.password, password)
             if is_auth:
-                return user
+                token = create_access_token(identity=username)
+                return token
 
         return False
 
@@ -149,7 +152,7 @@ class Listing(db.Model):
 
     image_url = db.Column(
         db.Text,
-        default="/static/images/default-pic.png",
+        default=DEFAULT_IMAGE_URL,
     )
 
     price = db.Column(
@@ -172,10 +175,44 @@ class Listing(db.Model):
         nullable=False,
     )
 
-    host = db.Column(
-        db.ForeignKey('users.username'),
+    host_username = db.Column(
+        db.ForeignKey('users.username', ondelete='CASCADE'),
         nullable=False,
     )
+
+    def __repr__(self):
+        return f'< Listing  #{self.id}: {self.name}, ${self.price}, Location:{self.location}, Details:{self.details}, Listing type:{self.listing_type} >'
+
+    @classmethod
+    def new(cls, name, image_url, price, location, details, listing_type, host_username):
+        """ Creates and returns new listing """
+
+        listing = Listing(
+           name=name,
+           image_url=image_url,
+           price=price,
+           location=location,
+           details=details,
+           listing_type=listing_type,
+           host_username=host_username
+        )
+
+        db.session.add(listing)
+        return listing
+
+    def serialize(self):
+        """Serialize to dictionary."""
+
+        return {
+            "name":self.name,
+            "image_url":self.image_url,
+            "price":self.price,
+            "location":self.location,
+            "details":self.details,
+            "listing_type":self.listing_type,
+            "host_username":self.host_username
+        }
+
 
 
 # class User_Message(db.Model):
@@ -192,14 +229,14 @@ class Listing(db.Model):
 
 #     to_username = db.Column(
 #         db.Text,
-#         db.ForeignKey('users.username'),
+#         db.ForeignKey('users.username', ondelete='CASCADE'),
 #         nullable=False,
 #         primary_key=True
 #     )
 
 #     message_id = db.Column(
 #         db.Integer,
-#         db.ForeignKey('messages.id'),
+#         db.ForeignKey('messages.id', ondelete='CASCADE'),
 #         nullable=False
 #     )
 
