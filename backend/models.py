@@ -5,7 +5,7 @@ from datetime import datetime
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
-DEFAULT_IMAGE_URL = "https: // www.publicdomainpictures.net/pictures/280000/nahled/not-found-image-15383864787lu.jpg"
+DEFAULT_IMAGE_URL = "https://www.publicdomainpictures.net/pictures/280000/nahled/not-found-image-15383864787lu.jpg"
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -37,7 +37,7 @@ class User(db.Model):
         unique=True,
     )
 
-    image = db.Column(db.String,
+    image_url = db.Column(db.String,
                   nullable=False,
                   default=DEFAULT_IMAGE_URL)
 
@@ -48,6 +48,20 @@ class User(db.Model):
 
     # messages = db.relationship(
     #     'Message', secondary="users_messages", backref='users')
+
+    # messages_sent = db.relationship(
+    #     "User",
+    #     secondary="users_messages",
+    #     primaryjoin=(User_Message.from_username == username),
+    #     secondaryjoin=(User_Message.to_username == username)
+    # )
+    #
+    # messages_received = db.relationship(
+    #     "User",
+    #     secondary="users_messages",
+    #     primaryjoin=(User_Message.to_username == username),
+    #     secondaryjoin=(User_Message.from_username == username)
+    # )
 
     listings = db.relationship('Listing', backref='user')
 
@@ -162,13 +176,6 @@ class Listing(db.Model):
         db.ForeignKey('users.username'),
         nullable=False,
     )
-
-    renter = db.Column(
-        db.ForeignKey('users.username'),
-        nullable=True,
-    )
-
-    user = db.relationship('User')
 
 
 # class User_Message(db.Model):

@@ -1,4 +1,3 @@
-from distutils.log import error
 import os
 
 from flask import Flask, jsonify, request, flash
@@ -49,10 +48,8 @@ def signup():
         db.session.commit()
 
     except IntegrityError as e:
-        flash("Username already taken", 'danger')
         return jsonify({"error”: “username taken"})
 
-    # do_login(user)
 
 
 connect_db(app)
