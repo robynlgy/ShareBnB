@@ -1,3 +1,4 @@
+from email.mime import message
 import os
 
 from flask import Flask, jsonify, request, flash
@@ -5,9 +6,11 @@ from flask_debugtoolbar import DebugToolbarExtension
 from pyparsing import token_map
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
-
+from aws import send_to_s3
 from models import db, connect_db, User, Listing
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
+
 load_dotenv()
 
 CURR_USER_KEY = "curr_user"
@@ -20,7 +23,9 @@ app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config["JWT_SECRET_KEY"] = os.environ['SECRET_KEY']
-toolbar = DebugToolbarExtension(app)
+app.config['S3_BUCKET'] = os.environ["BUCKET_NAME"]
+app.config['S3_LOCATION'] = 'http://{}.s3.amazonaws.com/'.format(app.config['S3_BUCKET'])
+# toolbar = DebugToolbarExtension(app)
 jwt = JWTManager(app)
 
 connect_db(app)
@@ -89,19 +94,49 @@ def post_listings():
     if not user:
         return jsonify({"error":"Access unauthorized."})
 
-    listing = Listing.new(
-        name = request.json["name"],
-        image_url = request.json.get("image_url") or None,
-        price = request.json["price"],
-        location = request.json["location"],
-        details = request.json["details"],
-        listing_type = request.json["listing_type"],
-        host_username = username
-    )
-    db.session.commit()
+    try:
+        listing = Listing.new(
+            name = request.json["name"],
+            # image_url = request.json.get("image_url") or None,
+            price = request.json["price"],
+            location = request.json["location"],
+            details = request.json["details"],
+            listing_type = request.json["listing_type"],
+            host_username = username
+        )
+        db.session.commit()
 
-    return jsonify(listing=listing.serialize())
+        return jsonify(listing=listing.serialize())
+    except KeyError as e:
+        print("keyerror>>>>>>",e)
+        return jsonify({"error": f"Missing {str(e)}"})
 
+@app.post('/listings/<int:id>/img')
+@jwt_required()
+def upload_image(id):
+    """
+    Post image and returns listing. Requires authentication.
+
+    Accepts file: image_url 
+    """
+    
+    file = request.files['image_url']
+    
+    # username = get_jwt_identity()
+    # user = User.query.get(username)
+
+    
+    # if not user:
+    #     return jsonify({"error":"Access unauthorized."})
+    if file:
+        file.filename = secure_filename(file.filename)
+        output = send_to_s3(file, app)
+        return str(output)
+
+   
+   
+    print("file >>>>>>>", file.filename)
+    # return jsonify(request.files)
 
 @app.get('/listings')
 def get_listings():
@@ -109,7 +144,16 @@ def get_listings():
 
     listings = Listing.query.all()
     serialized = [listing.serialize() for listing in listings]
+    return jsonify(listing=serialized)
 
+
+
+@app.get('/listings/<int:id>')
+def get_listing(id):
+    """ Get all listing. No authentication required. """
+
+    listing = Listing.query.get_or_404(id)
+    serialized = listing.serialize()
     return jsonify(listing=serialized)
 
 

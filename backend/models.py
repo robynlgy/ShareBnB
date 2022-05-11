@@ -26,6 +26,7 @@ class User(db.Model):
         db.Text,
         nullable=False,
     )
+    
 
     last_name = db.Column(
         db.Text,
