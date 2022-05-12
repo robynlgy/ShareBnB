@@ -136,6 +136,17 @@ class User(db.Model):
 
         return False
 
+    def serialize(self):
+        """Serialize to dictionary."""
+
+        return {
+            "username":self.username,
+            "firstName":self.first_name,
+            "lastName":self.last_name,
+            "email":self.email,
+            "imageUrl":self.image_url,
+        }
+
 
 class Message(db.Model):
     """An individual message ("Share B&B")."""
@@ -246,12 +257,12 @@ class Listing(db.Model):
 
         return {
             "name":self.name,
-            "image_url":self.image_url,
+            "imageUrl":self.image_url,
             "price":self.price,
             "location":self.location,
             "details":self.details,
-            "listing_type":self.listing_type,
-            "host_username":self.host_username
+            "listingType":self.listing_type,
+            "hostUsername":self.host_username
         }
 
 

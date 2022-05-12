@@ -11,13 +11,14 @@ from aws import send_to_s3
 from models import db, connect_db, User, Listing, Message
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
+from flask_cors import CORS
 
 load_dotenv()
 
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
-
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -78,6 +79,21 @@ def login():
 
     return jsonify({"error": "Invalid login credentials."})
 
+
+@app.get('/<username>')
+@jwt_required()
+def get_user(username):
+    """Return user info. Requires authentication."""
+
+    JWTusername = get_jwt_identity()
+
+    user = User.query.get_or_404(username)
+
+    if JWTusername != username:
+        return jsonify({"error":"Unauthorized access."})
+
+    serialized = user.serialize()
+    return jsonify(user=serialized)
 
 
 @app.post('/listings')
