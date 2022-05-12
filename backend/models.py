@@ -11,6 +11,31 @@ DEFAULT_IMAGE_URL = "https://www.publicdomainpictures.net/pictures/280000/nahled
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
+class User_Message(db.Model):
+    """Join table between users and messages (the join represents a message)."""
+
+    __tablename__ = 'users_messages'
+
+    from_username = db.Column(
+        db.Text,
+        db.ForeignKey('users.username'),
+        nullable=False,
+        primary_key=True
+    )
+
+    to_username = db.Column(
+        db.Text,
+        db.ForeignKey('users.username', ondelete='CASCADE'),
+        nullable=False,
+        primary_key=True
+    )
+
+    message_id = db.Column(
+        db.Integer,
+        db.ForeignKey('messages.id', ondelete='CASCADE'),
+        nullable=False
+    )
+
 
 class User(db.Model):
     """User in the system."""
@@ -26,7 +51,7 @@ class User(db.Model):
         db.Text,
         nullable=False,
     )
-    
+
 
     last_name = db.Column(
         db.Text,
@@ -48,22 +73,20 @@ class User(db.Model):
         nullable=False,
     )
 
-    # messages = db.relationship(
-    #     'Message', secondary="users_messages", backref='users')
 
-    # messages_sent = db.relationship(
-    #     "User",
-    #     secondary="users_messages",
-    #     primaryjoin=(User_Message.from_username == username),
-    #     secondaryjoin=(User_Message.to_username == username)
-    # )
-    #
-    # messages_received = db.relationship(
-    #     "User",
-    #     secondary="users_messages",
-    #     primaryjoin=(User_Message.to_username == username),
-    #     secondaryjoin=(User_Message.from_username == username)
-    # )
+    messages_sent = db.relationship(
+        "User",
+        secondary="users_messages",
+        primaryjoin=(User_Message.from_username == username),
+        secondaryjoin=(User_Message.to_username == username)
+    )
+
+    messages_received = db.relationship(
+        "User",
+        secondary="users_messages",
+        primaryjoin=(User_Message.to_username == username),
+        secondaryjoin=(User_Message.from_username == username)
+    )
 
     listings = db.relationship('Listing', backref='user')
 
@@ -201,6 +224,23 @@ class Listing(db.Model):
         db.session.add(listing)
         return listing
 
+    @classmethod
+    def edit(cls, name, image_url, price, location, details, listing_type, host_username):
+        """ Creates and returns new listing """
+
+        listing = Listing(
+           name=name,
+           image_url=image_url,
+           price=price,
+           location=location,
+           details=details,
+           listing_type=listing_type,
+           host_username=host_username
+        )
+
+        db.session.add(listing)
+        return listing
+
     def serialize(self):
         """Serialize to dictionary."""
 
@@ -216,30 +256,6 @@ class Listing(db.Model):
 
 
 
-# class User_Message(db.Model):
-#     """Join table between users and messages (the join represents a message)."""
-
-#     __tablename__ = 'users_messages'
-
-#     from_username = db.Column(
-#         db.Text,
-#         db.ForeignKey('users.username'),
-#         nullable=False,
-#         primary_key=True
-#     )
-
-#     to_username = db.Column(
-#         db.Text,
-#         db.ForeignKey('users.username', ondelete='CASCADE'),
-#         nullable=False,
-#         primary_key=True
-#     )
-
-#     message_id = db.Column(
-#         db.Integer,
-#         db.ForeignKey('messages.id', ondelete='CASCADE'),
-#         nullable=False
-#     )
 
 def connect_db(app):
     """Connect this database to provided Flask app.

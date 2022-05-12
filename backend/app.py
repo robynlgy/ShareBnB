@@ -1,5 +1,6 @@
 from email.mime import message
 import os
+from tabnanny import filename_only
 
 from flask import Flask, jsonify, request, flash
 from flask_debugtoolbar import DebugToolbarExtension
@@ -7,7 +8,7 @@ from pyparsing import token_map
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from aws import send_to_s3
-from models import db, connect_db, User, Listing
+from models import db, connect_db, User, Listing, Message
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 
@@ -78,8 +79,7 @@ def login():
     return jsonify({"error": "Invalid login credentials."})
 
 
-# POST /listing  -- accepts json
-#   , auth: loggedIn
+
 @app.post('/listings')
 @jwt_required()
 def post_listings():
@@ -97,7 +97,7 @@ def post_listings():
     try:
         listing = Listing.new(
             name = request.json["name"],
-            # image_url = request.json.get("image_url") or None,
+            image_url = request.json.get("image_url") or None,
             price = request.json["price"],
             location = request.json["location"],
             details = request.json["details"],
@@ -117,26 +117,24 @@ def upload_image(id):
     """
     Post image and returns listing. Requires authentication.
 
-    Accepts file: image_url 
+    Accepts file: image_url
     """
-    
-    file = request.files['image_url']
-    
-    # username = get_jwt_identity()
-    # user = User.query.get(username)
+    username = get_jwt_identity()
+    user = User.query.get_or_404(username)
+    listing = Listing.query.get_or_404(id)
 
-    
-    # if not user:
-    #     return jsonify({"error":"Access unauthorized."})
+    if not user:
+        return jsonify({"error":"Access unauthorized."})
+
+    file = request.files['image_url']
     if file:
         file.filename = secure_filename(file.filename)
-        output = send_to_s3(file, app)
-        return str(output)
+        output = send_to_s3(file, app.config["S3_LOCATION"])
+        listing.image_url=output
+        db.session.commit()
 
-   
-   
-    print("file >>>>>>>", file.filename)
-    # return jsonify(request.files)
+        return output
+
 
 @app.get('/listings')
 def get_listings():
@@ -145,7 +143,6 @@ def get_listings():
     listings = Listing.query.all()
     serialized = [listing.serialize() for listing in listings]
     return jsonify(listing=serialized)
-
 
 
 @app.get('/listings/<int:id>')
@@ -158,5 +155,23 @@ def get_listing(id):
 
 
 
-# POST /messages/new -- accepts {message, to_user}
+# POST /messages/new -- accepts {message, to_username}
 #  backend provide message_id, timestamp, from_id ,   auth: loggedIn
+@app.post('/messages')
+@jwt_required()
+def post_message():
+    """ Post new message to another user.
+
+    Accepts json {message, to_username} """
+    pass
+    # TODO:
+    # username = get_jwt_identity()
+    # user = User.query.get_or_404(username)
+    # text = request.json["text"]
+    # to_username = request.json["to_username"]
+    # message = Message(text=text)
+    # db.session.add(message)
+
+    # user.messages_sent.append()
+
+
