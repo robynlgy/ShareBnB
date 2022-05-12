@@ -1,8 +1,10 @@
 from email.mime import message
 import os
 from tabnanny import filename_only
+from urllib import response
 
 from flask import Flask, jsonify, request, flash
+import flask
 from flask_debugtoolbar import DebugToolbarExtension
 from pyparsing import token_map
 from sqlalchemy.exc import IntegrityError
@@ -46,8 +48,8 @@ def signup():
     Return error message if the there already is a user with that username.
     """
     username = request.json["username"]
-    first_name = request.json["first_name"]
-    last_name = request.json["last_name"]
+    first_name = request.json["firstName"]
+    last_name = request.json["lastName"]
     password = request.json["password"]
     email = request.json["email"]
     image = request.json.get("image") or None
@@ -113,11 +115,11 @@ def post_listings():
     try:
         listing = Listing.new(
             name = request.json["name"],
-            image_url = request.json.get("image_url") or None,
+            image_url = request.json.get("imageUrl") or None,
             price = request.json["price"],
             location = request.json["location"],
             details = request.json["details"],
-            listing_type = request.json["listing_type"],
+            listing_type = request.json["listingType"],
             host_username = username
         )
         db.session.commit()
@@ -135,6 +137,8 @@ def upload_image(id):
 
     Accepts file: image_url
     """
+    
+    print('inside listing post<<<<<<<<')
     username = get_jwt_identity()
     user = User.query.get_or_404(username)
     listing = Listing.query.get_or_404(id)
@@ -142,14 +146,16 @@ def upload_image(id):
     if not user:
         return jsonify({"error":"Access unauthorized."})
 
-    file = request.files['image_url']
+    file = request.files['File']
     if file:
         file.filename = secure_filename(file.filename)
         output = send_to_s3(file, app.config["S3_LOCATION"])
         listing.image_url=output
         db.session.commit()
 
-        return output
+        response = jsonify({"success": "image uploaded"})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
 
 
 @app.get('/listings')
@@ -178,7 +184,7 @@ def get_listing(id):
 def post_message():
     """ Post new message to another user.
 
-    Accepts json {message, to_username} """
+    Accepts json {message, toUsername} """
     pass
     # TODO:
     # username = get_jwt_identity()

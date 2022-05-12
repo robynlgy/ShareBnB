@@ -11,30 +11,30 @@ DEFAULT_IMAGE_URL = "https://www.publicdomainpictures.net/pictures/280000/nahled
 bcrypt = Bcrypt()
 db = SQLAlchemy()
 
-class User_Message(db.Model):
-    """Join table between users and messages (the join represents a message)."""
+# class User_Message(db.Model):
+#     """Join table between users and messages (the join represents a message)."""
 
-    __tablename__ = 'users_messages'
+#     __tablename__ = 'users_messages'
 
-    from_username = db.Column(
-        db.Text,
-        db.ForeignKey('users.username'),
-        nullable=False,
-        primary_key=True
-    )
+#     from_username = db.Column(
+#         db.Text,
+#         db.ForeignKey('users.username'),
+#         nullable=False,
+#         primary_key=True
+#     )
 
-    to_username = db.Column(
-        db.Text,
-        db.ForeignKey('users.username', ondelete='CASCADE'),
-        nullable=False,
-        primary_key=True
-    )
+#     to_username = db.Column(
+#         db.Text,
+#         db.ForeignKey('users.username', ondelete='CASCADE'),
+#         nullable=False,
+#         primary_key=True
+#     )
 
-    message_id = db.Column(
-        db.Integer,
-        db.ForeignKey('messages.id', ondelete='CASCADE'),
-        nullable=False
-    )
+#     message_id = db.Column(
+#         db.Integer,
+#         db.ForeignKey('messages.id', ondelete='CASCADE'),
+#         nullable=False
+#     )
 
 
 class User(db.Model):
@@ -74,19 +74,19 @@ class User(db.Model):
     )
 
 
-    messages_sent = db.relationship(
-        "User",
-        secondary="users_messages",
-        primaryjoin=(User_Message.from_username == username),
-        secondaryjoin=(User_Message.to_username == username)
-    )
+    # messages_sent = db.relationship(
+    #     "User",
+    #     secondary="users_messages",
+    #     primaryjoin=(User_Message.from_username == username),
+    #     secondaryjoin=(User_Message.to_username == username)
+    # )
 
-    messages_received = db.relationship(
-        "User",
-        secondary="users_messages",
-        primaryjoin=(User_Message.to_username == username),
-        secondaryjoin=(User_Message.from_username == username)
-    )
+    # messages_received = db.relationship(
+    #     "User",
+    #     secondary="users_messages",
+    #     primaryjoin=(User_Message.to_username == username),
+    #     secondaryjoin=(User_Message.from_username == username)
+    # )
 
     listings = db.relationship('Listing', backref='user')
 

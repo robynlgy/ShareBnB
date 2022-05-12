@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5000";
 
 /** API Class.
  */
@@ -62,6 +62,13 @@ class ShareBBApi {
 
   static async getUser(username) {
     let res = await this.request(`${username}`);
+    return res.user;
+  }
+
+  static async listingImage(id, data) {
+    console.log('inside listingImage<<<<<<<<')
+    let res = await this.request(`listings/${id}/img`, data, "post");
+    console.log("res from api", res)
     return res.user;
   }
 

@@ -40,6 +40,7 @@ function App() {
     localStorage.clear();
   }
 
+
   /** useEffect runs on initial render and on changes in token state
    *  - makes request to API for user details from token payload
    *  - updates currentUser and sets token in localStorage
