@@ -63,14 +63,14 @@ function LoginForm({ login }) {
 
   return (
     <form
-      className="justify-content-center container bg-light"
+      className="justify-content-center container bg-dark mt-5 py-3 rounded-3"
       onSubmit={handleSubmit}
     >
       {formInputsHTML}
 
       {alerts && <Alert alerts={alerts} />}
 
-      <button className="btn-primary btn ms-3 py-1 btn-sm">
+      <button className="btn-outline-light btn ms-3 py-1 btn-sm">
         Login
       </button>
     </form>

@@ -1,3 +1,4 @@
+import "./ListingDetails.css"
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ShareBBApi from "./api";
@@ -38,21 +39,23 @@ function ListingDetails() {
   if (listing.isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="bg-light my-3 d-flex p-3">
+    <div className="bg-dark my-3 d-flex p-3 container">
+      <div className="row">
       {listing.data.imageUrl && (
         <img
-          className="listing-thumbnail"
+          className="listing-detail-img"
           src={listing.data.imageUrl}
           alt={`listing-${id}`}
         />
       )}
+      </div>
       <div className="text-start ms-5">
         <h4>{listing.data.name}</h4>
         <p>{listing.data.location}</p>
         <p>{listing.data.price}</p>
         <p>{listing.data.listingType}</p>
         <p>{listing.data.detail}</p>
-        {currentUser && 
+        {currentUser &&
           <ListingImageForm changeImage={changeImage} id={id} />
         }
       </div>

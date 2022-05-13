@@ -108,14 +108,14 @@ function SignupForm({ signup }) {
 
   return (
     <form
-      className="justify-content-center container bg-light"
+      className="justify-content-center container bg-dark mt-5 py-3 rounded-3"
       onSubmit={handleSubmit}
     >
       {formInputsHTML}
 
       {alerts && <Alert alerts={alerts} />}
 
-      <button className="btn btn-primary ms-3 py-1 btn-sm">
+      <button className="btn btn-outline-light ms-3 py-1 btn-sm">
         Submit
       </button>
     </form>

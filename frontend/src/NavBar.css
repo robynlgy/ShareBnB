@@ -1,0 +1,19 @@
+.bg-dark {
+    background-color: rgba(5,20,28,0.9) !important;
+  }
+
+.nav-link{
+    color:white;
+}
+input.form-control.bg-dark{
+    color:white;
+}
+
+input.form-control{
+    background-color: rgba(5,20,28,0.9) !important;
+    color:white;
+}
+
+input.form-control:focus{
+    color:white;
+}

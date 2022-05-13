@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Alert from "./shared/Alert";
 
 /** Form component used for creating a new listing.
- * props: listing
- * state: formData
+ * props: addListing
+ * state: formData, alerts
  */
-function ListingForm({ addListing }) {
+function ListingForm({ addListing, toggleForm }) {
   const initialValue = {
     name:"",
     price:"",
@@ -15,7 +14,6 @@ function ListingForm({ addListing }) {
     listingType:"",
   };
   const [formData, setFormData] = useState(initialValue);
-  const navigate = useNavigate();
   const [alerts, setAlerts] = useState(null)
 
   /** Update form input. */
@@ -32,7 +30,10 @@ function ListingForm({ addListing }) {
     evt.preventDefault();
     try {
       await addListing(formData);
-      navigate("/listings");
+      setAlerts(["Successfully added!"])    // TODO:
+      setTimeout(()=>{
+        toggleForm()
+      },2000)
     } catch (err) {
       console.log("errors",err)
       // setAlerts(err)
@@ -103,14 +104,14 @@ function ListingForm({ addListing }) {
 
   return (
     <form
-      className="justify-content-center container bg-light"
+      className="custom-form justify-content-center container bg-dark rounded-3 py-2 my-2"
       onSubmit={handleSubmit}
     >
       {formInputsHTML}
 
       {alerts && <Alert alerts={alerts} />}
 
-      <button className="btn btn-primary ms-3 py-1 btn-sm">
+      <button className="btn btn-outline-light ms-3 py-1 btn-sm">
         Submit
       </button>
     </form>

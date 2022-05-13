@@ -19,7 +19,7 @@ function ListingImageForm({changeImage, id}) {
     const formData = new FormData();
     formData.append('File', selectedFile);
     try {
-      await addImage(id,formData); //TODO: id should be dynamic
+      await addImage(id,formData);
       changeImage()
     } catch (err) {
       setAlerts([err]);
@@ -33,7 +33,7 @@ function ListingImageForm({changeImage, id}) {
 
   return (
     <form
-      className="justify-content-center container bg-light mt-1 py-1"
+      className="justify-content-center bg-dark mt-5 "
       onSubmit={handleSubmit}
     >
       <input
@@ -48,8 +48,8 @@ function ListingImageForm({changeImage, id}) {
 
       {alerts && <Alert alerts={alerts} />}
       </div>
-      <button className="btn-primary btn mt-3 py-1 btn-sm">
-        Submit
+      <button className="btn-outline-light btn mt-3 py-1 btn-sm">
+        Upload Image
       </button>
     </form>
   );

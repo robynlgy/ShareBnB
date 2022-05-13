@@ -34,18 +34,18 @@ function SearchForm({ searchFor }) {
   return (
     <div className="SearchForm mb-4">
       <form onSubmit={handleSubmit}>
-        <div className="row justify-content-center justify-content-lg-start gx-0">
+        <div className="search-input row justify-content-center">
           <div className="col-8">
             <input
-              className="form-control form-control-lg"
+              className="form-control bg-dark"
               name="searchTerm"
-              placeholder="Enter search term.."
+              placeholder="Enter search term..."
               value={searchTerm}
               onChange={handleChange}
             />
           </div>
           <div className="col-auto">
-            <button type="submit" className="btn btn-lg btn-primary">
+            <button type="submit" className="btn btn-outline-light">
               Submit
             </button>
           </div>

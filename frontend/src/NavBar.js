@@ -1,3 +1,4 @@
+import './NavBar.css'
 import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "./UserContext";
@@ -14,7 +15,7 @@ function NavBar({ logout }) {
   };
 
   return (
-    <nav className="NavBar navbar navbar-dark bg-dark">
+    <nav className="navbar navbar-dark bg-dark shadow-lg">
       {currentUser ? (
         <div className="container">
           <NavLink className="navbar-brand d-inline" to="/" end>

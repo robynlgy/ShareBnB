@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 function ListingCard({ listing }) {
     return (
         <Link to={`/listings/${listing.id}`}>
-            <div className="bg-light my-3 d-flex p-3">
+            <div className="bg-dark my-3 d-flex p-3 rounded-3">
                 {listing.imageUrl && <img className="listing-thumbnail" src={listing.imageUrl} alt={`listing-${listing.id}`}/>}
                 <div className="text-start ms-5">
                     <h4>{listing.name}</h4>

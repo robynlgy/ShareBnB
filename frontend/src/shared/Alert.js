@@ -5,7 +5,7 @@
  */
 function Alert({ alerts }) {
   return (
-    <div className="alert alert-danger">
+    <div className="alert alert-success">
       {alerts.map((alert, idx) => (
         <p key={idx}>{alert}</p>
       ))}

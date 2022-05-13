@@ -29,14 +29,30 @@
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
 }
 
-.listing-thumbnail{
-  height:150px;
+a {
+  color:white;
+  text-decoration:none;
+}
+
+a:hover {
+  color:rgb(170, 167, 224);
+  text-decoration:none;
+}
+
+body {
+  background: url("https://images.unsplash.com/photo-1506526759727-bccc1ecc421d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80") no-repeat bottom center fixed;
+  background-size:cover;
+  color:white
+}
+
+.center-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
 }
