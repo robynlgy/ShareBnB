@@ -50,9 +50,11 @@ function ListingForm({ addListing }) {
         onChange={handleChange}
         value={formData.name}
         aria-label="name"
+        required
       />
       <label htmlFor="price">Price: </label>
       <input
+        type="number"
         id="price"
         name="price"
         className="form-control"
@@ -60,6 +62,7 @@ function ListingForm({ addListing }) {
         onChange={handleChange}
         value={formData.price}
         aria-label="price"
+        required
       />
       <label htmlFor="location">Location: </label>
       <input
@@ -70,6 +73,7 @@ function ListingForm({ addListing }) {
         onChange={handleChange}
         value={formData.location}
         aria-label="location"
+        required
       />
       <label htmlFor="details">Details: </label>
       <input
@@ -80,6 +84,7 @@ function ListingForm({ addListing }) {
         onChange={handleChange}
         value={formData.details}
         aria-label="details"
+        required
       />
       <label htmlFor="listingType">Listing type: </label>
       <input
@@ -90,6 +95,7 @@ function ListingForm({ addListing }) {
         onChange={handleChange}
         value={formData.listingType}
         aria-label="listingType"
+        required
       />
 
     </div>

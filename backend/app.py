@@ -28,7 +28,8 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config["JWT_SECRET_KEY"] = os.environ['SECRET_KEY']
 app.config['S3_BUCKET'] = os.environ["BUCKET_NAME"]
-app.config['S3_LOCATION'] = 'http://{}.s3.amazonaws.com/'.format(app.config['S3_BUCKET'])
+app.config['S3_LOCATION'] = 'http://{}.s3.amazonaws.com/'.format(
+    app.config['S3_BUCKET'])
 # toolbar = DebugToolbarExtension(app)
 jwt = JWTManager(app)
 
@@ -64,7 +65,7 @@ def signup():
             image_url=image
         )
         db.session.commit()
-        return jsonify({ "token": token })
+        return jsonify({"token": token})
 
     except IntegrityError:
         return jsonify({"error": "Username taken."})
@@ -74,10 +75,11 @@ def signup():
 def login():
     """Return token upon authentication of user login."""
 
-    token = User.authenticate(request.json["username"],request.json["password"])
+    token = User.authenticate(
+        request.json["username"], request.json["password"])
 
     if token:
-        return jsonify({ "token": token })
+        return jsonify({"token": token})
 
     return jsonify({"error": "Invalid login credentials."})
 
@@ -92,7 +94,7 @@ def get_user(username):
     user = User.query.get_or_404(username)
 
     if JWTusername != username:
-        return jsonify({"error":"Unauthorized access."})
+        return jsonify({"error": "Unauthorized access."})
 
     serialized = user.serialize()
     return jsonify(user=serialized)
@@ -110,24 +112,25 @@ def post_listings():
     user = User.query.get(username)
 
     if not user:
-        return jsonify({"error":"Access unauthorized."})
+        return jsonify({"error": "Access unauthorized."})
 
     try:
         listing = Listing.new(
-            name = request.json["name"],
-            image_url = request.json.get("imageUrl") or None,
-            price = request.json["price"],
-            location = request.json["location"],
-            details = request.json["details"],
-            listing_type = request.json["listingType"],
-            host_username = username
+            name=request.json["name"],
+            image_url=request.json.get("imageUrl") or None,
+            price=request.json["price"],
+            location=request.json["location"],
+            details=request.json["details"],
+            listing_type=request.json["listingType"],
+            host_username=username
         )
         db.session.commit()
 
         return jsonify(listing=listing.serialize())
     except KeyError as e:
-        print("keyerror>>>>>>",e)
+        print("keyerror>>>>>>", e)
         return jsonify({"error": f"Missing {str(e)}"})
+
 
 @app.post('/listings/<int:id>/img')
 @jwt_required()
@@ -144,15 +147,14 @@ def upload_image(id):
     listing = Listing.query.get_or_404(id)
 
     if not user:
-        return jsonify({"error":"Access unauthorized."})
+        return jsonify({"error": "Access unauthorized."})
 
     file = request.files['File']
     if file:
         file.filename = secure_filename(file.filename)
         output = send_to_s3(file, app.config["S3_LOCATION"])
-        listing.image_url=output
+        listing.image_url = output
         db.session.commit()
-
         response = jsonify({"success": "image uploaded"})
         # response.headers.add('Access-Control-Allow-Origin', '*')
         return response
@@ -162,7 +164,14 @@ def upload_image(id):
 def get_listings():
     """ Get all listings. No authentication required. """
 
-    listings = Listing.query.all()
+    search_term = request.args.get('listing')
+
+    if search_term:
+        listings = Listing.query.filter_by(name=search_term)
+    else:
+        listings = Listing.query.all()
+
+    print(listings)
     serialized = [listing.serialize() for listing in listings]
     return jsonify(listing=serialized)
 
@@ -174,7 +183,6 @@ def get_listing(id):
     listing = Listing.query.get_or_404(id)
     serialized = listing.serialize()
     return jsonify(listing=serialized)
-
 
 
 # POST /messages/new -- accepts {message, to_username}
@@ -195,5 +203,3 @@ def post_message():
     # db.session.add(message)
 
     # user.messages_sent.append()
-
-

@@ -14,6 +14,7 @@ s3 = boto3.client(
 
 def send_to_s3(file, location):
     """ Accepts file and app and uploads to aws s3. """
+
     try:
         s3.put_object(
             Body=file,

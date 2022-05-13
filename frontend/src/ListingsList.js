@@ -5,6 +5,7 @@ import ListingForm from "./ListingForm";
 import ListingCard from "./ListingCard";
 import { useContext } from "react";
 import UserContext from "./UserContext";
+import SearchForm from "./SearchForm";
 
 /** ListingsList component
  *
@@ -27,7 +28,7 @@ function ListingsList() {
       }
       if (isLoading) fetchListingsFromAPI();
     },
-    [listings]
+    []
   );
 
   async function addListing(formData){
@@ -35,10 +36,17 @@ function ListingsList() {
     setListings([...listings, response])
   }
 
+  /** Triggered by search form submit; reloads jobs. */
+  async function search(listing) {
+    let response = await ShareBBApi.getListings(listing);
+    setListings(response);
+  }
+
   if (isLoading) return < LoadingSpinner />
 
   return (
     <div className="pb-5">
+      <SearchForm searchFor={search}/>
       {currentUser && <ListingForm addListing={addListing}/>}
 
       {listings.map((listing)=>(

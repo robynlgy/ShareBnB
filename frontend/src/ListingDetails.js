@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import ShareBBApi from "./api";
 import LoadingSpinner from "./shared/LoadingSpinner";
 import ListingImageForm from "./ListingImageForm";
+import { useContext } from "react";
+import UserContext from "./UserContext";
 
 /** Presentational Component for each list item in list of Listings,
  * linking to their detail page
@@ -15,6 +17,8 @@ function ListingDetails() {
     data: {},
     isLoading: true,
   });
+
+  const { currentUser } = useContext(UserContext);
 
   useEffect(
     function getListing() {
@@ -48,7 +52,9 @@ function ListingDetails() {
         <p>{listing.data.price}</p>
         <p>{listing.data.listingType}</p>
         <p>{listing.data.detail}</p>
-        <ListingImageForm changeImage={changeImage} id={id} />
+        {currentUser && 
+          <ListingImageForm changeImage={changeImage} id={id} />
+        }
       </div>
     </div>
   );

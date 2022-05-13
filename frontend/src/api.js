@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5001";
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5000";
 
 /** API Class.
  */
@@ -38,8 +38,9 @@ class ShareBBApi {
 
   /** Get all listings. */
 
-  static async getListings() {
-    let res = await this.request(`listings`);
+  static async getListings(listing) {
+    let res = await this.request(`listings`, {listing});
+    console.log(listing)
     return res.listing;
   }
 
