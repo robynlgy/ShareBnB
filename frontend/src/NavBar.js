@@ -28,13 +28,13 @@ function NavBar({ logout }) {
             >
               Listings
             </NavLink>
-            <NavLink
+            {/* <NavLink
               className="nav-link d-inline"
               style={({ isActive }) => (isActive ? activeStyle : undefined)}
               to="/listings/new"
             >
               Create Listing
-            </NavLink>
+            </NavLink> */}
             <NavLink
               className="nav-link d-inline"
               style={({ isActive }) => (isActive ? activeStyle : undefined)}

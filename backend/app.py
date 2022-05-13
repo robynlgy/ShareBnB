@@ -137,7 +137,7 @@ def upload_image(id):
 
     Accepts file: image_url
     """
-    
+
     print('inside listing post<<<<<<<<')
     username = get_jwt_identity()
     user = User.query.get_or_404(username)
@@ -154,7 +154,7 @@ def upload_image(id):
         db.session.commit()
 
         response = jsonify({"success": "image uploaded"})
-        response.headers.add('Access-Control-Allow-Origin', '*')
+        # response.headers.add('Access-Control-Allow-Origin', '*')
         return response
 
 

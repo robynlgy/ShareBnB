@@ -256,6 +256,7 @@ class Listing(db.Model):
         """Serialize to dictionary."""
 
         return {
+            "id":self.id,
             "name":self.name,
             "imageUrl":self.image_url,
             "price":self.price,

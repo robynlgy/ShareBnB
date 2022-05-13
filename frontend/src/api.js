@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5000";
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5001";
 
 /** API Class.
  */
@@ -33,14 +33,14 @@ class ShareBBApi {
 
   static async getListing(id) {
     let res = await this.request(`listings/${id}`);
-    return res
+    return res.listing;
   }
 
   /** Get all listings. */
 
   static async getListings() {
     let res = await this.request(`listings`);
-    return res;
+    return res.listing;
   }
 
   /** Register User and return token*/
@@ -65,11 +65,16 @@ class ShareBBApi {
     return res.user;
   }
 
+  /** Create new listing */
+  static async addListing(data) {
+    let res = await this.request(`listings`, data, "post");
+    return res.listing;
+  }
+
+  /** Upload image to listing */
   static async listingImage(id, data) {
-    console.log('inside listingImage<<<<<<<<')
     let res = await this.request(`listings/${id}/img`, data, "post");
-    console.log("res from api", res)
-    return res.user;
+    return res;
   }
 
 }
