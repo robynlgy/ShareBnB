@@ -1,4 +1,3 @@
-import "./ListingDetails.css"
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ShareBBApi from "./api";
