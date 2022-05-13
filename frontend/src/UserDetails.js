@@ -1,5 +1,30 @@
+import { useContext } from "react";
+import UserContext from "./UserContext";
+
+/** user details 
+ * context: currentUser
+ */
 function User(){
-  return <div>User</div>
+  const { currentUser } = useContext(UserContext);
+  return (
+    <div className="bg-dark my-3 d-flex p-3 container">
+      <div className="row">
+      {(
+        <img
+          className="user-detail-img"
+          src={currentUser.imageUrl}
+        />
+      )}
+      </div>
+      <div className="text-start ms-5">
+        <h4>{currentUser.username}</h4>
+        <p>{`${currentUser.firstName} ${currentUser.lastName}`}</p>
+        <p>{currentUser.email}</p>
+      </div>
+    </div>
+  
+  )
+
 }
 
 export default User;

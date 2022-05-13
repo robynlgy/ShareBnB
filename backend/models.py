@@ -1,12 +1,16 @@
 """ SQLAlchemy models for ShareB&B."""
 
+from cgitb import text
 from datetime import datetime
+from email import message
 
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity,JWTManager
+from sqlalchemy import false
 
-DEFAULT_IMAGE_URL = "https://www.publicdomainpictures.net/pictures/280000/nahled/not-found-image-15383864787lu.jpg"
+DEFAULT_IMAGE_URL = "https://st.depositphotos.com/1835047/1677/i/600/depositphotos_16770723-stock-photo-tree-house.jpg"
+DEFAULT_USER_IMAGE_URL = "https://www.thepoke.co.uk/wp-content/uploads/2020/06/bread.jpg"
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -66,7 +70,7 @@ class User(db.Model):
 
     image_url = db.Column(db.String,
                   nullable=False,
-                  default=DEFAULT_IMAGE_URL)
+                  default=DEFAULT_USER_IMAGE_URL)
 
     password = db.Column(
         db.Text,
@@ -151,24 +155,47 @@ class User(db.Model):
 class Message(db.Model):
     """An individual message ("Share B&B")."""
 
-    __tablename__ = 'messages'
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
-    )
+    __tablename__ = 'messages'
 
     text = db.Column(
         db.String(140),
         nullable=False,
     )
 
-    timestamp = db.Column(
-        db.DateTime,
-        nullable=False,
-        default=datetime.utcnow(),
-    )
+    # timestamp = db.Column(
+    #     db.DateTime,
+    #     nullable=False,
+    #     default=datetime.utcnow(),
+    # )
 
+    recipient_id = db.Column(
+        db.Text,
+        primary_key=True,
+    )
+    
+    def __repr__(self):
+        return f'< Message  #{self.id}: {self.text}, ${self.recipient_id} >'
+    
+    @classmethod
+    def new(cls, message, recipient):
+        """ Creates and returns new message """
+
+        message = Message(
+            text=message,
+            recipient_id=recipient
+        )
+
+        db.session.add(message)
+        return message
+    
+    def serialize(self):
+        """"Serialize"""
+        
+        return {
+            "message":self.text,
+            "recipient":self.recipient_id
+        }
 
 class Listing(db.Model):
     """An individual listing ("Share B&B")."""

@@ -48,9 +48,11 @@ function ListingImageForm({changeImage, id}) {
 
       {alerts && <Alert alerts={alerts} />}
       </div>
-      <button className="btn-outline-light btn mt-3 py-1 btn-sm">
-        Upload Image
-      </button>
+      {isFilePicked && 
+        <button className="btn-outline-light btn mt-3 py-1 btn-sm">
+          Upload Image
+        </button>
+      }
     </form>
   );
 }

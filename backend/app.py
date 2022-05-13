@@ -30,6 +30,7 @@ app.config["JWT_SECRET_KEY"] = os.environ['SECRET_KEY']
 app.config['S3_BUCKET'] = os.environ["BUCKET_NAME"]
 app.config['S3_LOCATION'] = 'http://{}.s3.amazonaws.com/'.format(
     app.config['S3_BUCKET'])
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 # toolbar = DebugToolbarExtension(app)
 jwt = JWTManager(app)
 
@@ -54,7 +55,7 @@ def signup():
     password = request.json["password"]
     email = request.json["email"]
     image = request.json.get("image") or None
-
+    print('in backend signup')
     try:
         token = User.signup(
             username=username,
@@ -67,8 +68,8 @@ def signup():
         db.session.commit()
         return jsonify({"token": token})
 
-    except IntegrityError:
-        return jsonify({"error": "Username taken."})
+    except IntegrityError as e:
+        return jsonify({"error": str(e)})
 
 
 @app.post('/login')
@@ -184,16 +185,34 @@ def get_listing(id):
     serialized = listing.serialize()
     return jsonify(listing=serialized)
 
-
-# POST /messages/new -- accepts {message, to_username}
-#  backend provide message_id, timestamp, from_id ,   auth: loggedIn
+##############################################################################
+# Messages
+# POST /messages/new -- accepts {message,  recipient_id}
+#  backend provide message_id, timestamp, from_id , recipient_id
 @app.post('/messages')
 @jwt_required()
 def post_message():
     """ Post new message to another user.
 
     Accepts json {message, toUsername} """
-    pass
+    username = get_jwt_identity()
+    user = User.query.get(username)
+
+    if not user:
+        return jsonify({"error": "Access unauthorized."})
+
+    try:
+        message = Message.new(
+            message=request.json["message"],
+            recipient=request.json["recipient"]
+        )
+        db.session.commit()
+
+        return jsonify(message=message.serialize())
+    except KeyError as e:
+        print("keyerror>>>>>>", e)
+        return jsonify({"error": f"Missing {str(e)}"})
+
     # TODO:
     # username = get_jwt_identity()
     # user = User.query.get_or_404(username)

@@ -36,7 +36,6 @@ function ListingDetails() {
   }
 
   if (listing.isLoading) return <LoadingSpinner />;
-
   return (
     <div className="bg-dark my-3 d-flex p-3 container">
       <div className="row">
@@ -54,7 +53,8 @@ function ListingDetails() {
         <p>{listing.data.price}</p>
         <p>{listing.data.listingType}</p>
         <p>{listing.data.detail}</p>
-        {currentUser &&
+        {currentUser.username === listing.data.hostUsername &&
+          
           <ListingImageForm changeImage={changeImage} id={id} />
         }
       </div>

@@ -48,6 +48,7 @@ class ShareBBApi {
 
   static async signup(data) {
     let res = await this.request(`signup`, data, "post");
+    console.log('in api', res)
     return res.token;
   }
 
@@ -77,6 +78,13 @@ class ShareBBApi {
     let res = await this.request(`listings/${id}/img`, data, "post");
     return res;
   }
+
+  /** Create new message */
+  static async addMessage(data) {
+    let res = await this.request(`messages`, data, "post");
+    return res.message;
+  }
+
 
 }
 

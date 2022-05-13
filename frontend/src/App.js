@@ -53,10 +53,11 @@ function App() {
           const response = await ShareBBApi.getUser(username);
           console.log("response from api",response)
           setCurrentUser({ ...response });
+          console.log()
           localStorage.setItem("token", token);
           setIsLoading(false);
         } catch (err){
-          // TODO: not sure if try catch works
+          console.log('in catch error', err)
           localStorage.clear();
           setIsLoading(false)
         }
