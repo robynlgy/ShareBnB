@@ -53,10 +53,12 @@ function ListingDetails() {
         <p>{listing.data.price}</p>
         <p>{listing.data.listingType}</p>
         <p>{listing.data.detail}</p>
-        {currentUser.username === listing.data.hostUsername &&
-          
+        {(currentUser && currentUser.username === listing.data.hostUsername) ?
           <ListingImageForm changeImage={changeImage} id={id} />
+          :
+          <button className="btn btn-outline-light mt-5">Message host (Coming Soon!)</button>
         }
+
       </div>
     </div>
   );

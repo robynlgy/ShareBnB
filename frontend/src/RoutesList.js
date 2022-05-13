@@ -3,7 +3,7 @@ import Homepage from "./Homepage";
 import ListingList from "./ListingsList";
 import ListingDetails from "./ListingDetails";
 import UserDetails from "./UserDetails";
-// import ListingForm from "./ListingForm";
+import UserListing from "./UserListing";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 import { useContext } from "react";
@@ -19,7 +19,7 @@ function RoutesList({ signup, login }) {
         <Route path="/" element={<Homepage />} />
         <Route path="/listings" element={<ListingList />} />
         <Route path="/listings/:id" element={<ListingDetails />} />
-        {/* <Route path="/listings/new" element={<ListingForm />} /> */}
+        <Route path="/listing/user" element={<UserListing />} />
         <Route path="/user" element={<UserDetails />} />
       </Routes>
     );

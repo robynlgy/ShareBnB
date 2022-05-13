@@ -18,7 +18,7 @@ function ListingsList() {
   const [listings, setListings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { currentUser } = useContext(UserContext);
-  var [toggle, setToggle] = useState(false); //TODO: toggle for form
+  const [toggle, setToggle] = useState(false);
 
   useEffect(function getListings() {
     async function fetchListingsFromAPI() {

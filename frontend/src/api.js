@@ -40,7 +40,6 @@ class ShareBBApi {
 
   static async getListings(listing) {
     let res = await this.request(`listings`, {listing});
-    console.log(listing)
     return res.listing;
   }
 
@@ -48,7 +47,6 @@ class ShareBBApi {
 
   static async signup(data) {
     let res = await this.request(`signup`, data, "post");
-    console.log('in api', res)
     return res.token;
   }
 
@@ -85,6 +83,11 @@ class ShareBBApi {
     return res.message;
   }
 
+  /** Get listings by user */
+  static async getCurrUserListing() {
+    let res = await this.request(`users/listings`);
+    return res.listing;
+  }
 
 }
 

@@ -51,13 +51,10 @@ function App() {
         const username = jwt_decode(token).sub;
         try{
           const response = await ShareBBApi.getUser(username);
-          console.log("response from api",response)
           setCurrentUser({ ...response });
-          console.log()
           localStorage.setItem("token", token);
           setIsLoading(false);
         } catch (err){
-          console.log('in catch error', err)
           localStorage.clear();
           setIsLoading(false)
         }

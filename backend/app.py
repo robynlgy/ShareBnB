@@ -1,12 +1,8 @@
-from email.mime import message
 import os
-from tabnanny import filename_only
-from urllib import response
 
 from flask import Flask, jsonify, request, flash
 import flask
 from flask_debugtoolbar import DebugToolbarExtension
-from pyparsing import token_map
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from aws import send_to_s3
@@ -101,6 +97,9 @@ def get_user(username):
     return jsonify(user=serialized)
 
 
+##############################################################################
+# Listings
+
 @app.post('/listings')
 @jwt_required()
 def post_listings():
@@ -160,6 +159,18 @@ def upload_image(id):
         # response.headers.add('Access-Control-Allow-Origin', '*')
         return response
 
+@app.get('/users/listings')
+@jwt_required()
+def get_listings_by_user():
+    """ Get all listings by user. Must be logged in. """
+
+    username = get_jwt_identity()
+    user = User.query.get_or_404(username)
+
+    listings = user.listings
+
+    serialized = [listing.serialize() for listing in listings]
+    return jsonify(listing=serialized)
 
 @app.get('/listings')
 def get_listings():
@@ -175,6 +186,8 @@ def get_listings():
     print(listings)
     serialized = [listing.serialize() for listing in listings]
     return jsonify(listing=serialized)
+
+
 
 
 @app.get('/listings/<int:id>')

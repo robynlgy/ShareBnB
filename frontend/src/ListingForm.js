@@ -30,7 +30,7 @@ function ListingForm({ addListing, toggleForm }) {
     evt.preventDefault();
     try {
       await addListing(formData);
-      setAlerts(["Successfully added!"])    // TODO:
+      setAlerts(["Successfully added!"])
       setTimeout(()=>{
         toggleForm()
       },2000)
