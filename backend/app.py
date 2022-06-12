@@ -17,11 +17,11 @@ CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL'] or 'postgresql:///sharebnb'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
-app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY'] or 'OH-SO-SECRET'
 app.config["JWT_SECRET_KEY"] = os.environ['SECRET_KEY']
 app.config['S3_BUCKET'] = os.environ["BUCKET_NAME"]
 app.config['S3_LOCATION'] = 'http://{}.s3.amazonaws.com/'.format(
@@ -51,7 +51,7 @@ def signup():
     password = request.json["password"]
     email = request.json["email"]
     image = request.json.get("image") or None
-    print('in backend signup')
+
     try:
         token = User.signup(
             username=username,
@@ -67,7 +67,6 @@ def signup():
     except IntegrityError as e:
         return jsonify({"error": str(e)})
 
-
 @app.post('/login')
 def login():
     """Return token upon authentication of user login."""
@@ -79,7 +78,6 @@ def login():
         return jsonify({"token": token})
 
     return jsonify({"error": "Invalid login credentials."})
-
 
 @app.get('/<username>')
 @jwt_required()
@@ -95,7 +93,6 @@ def get_user(username):
 
     serialized = user.serialize()
     return jsonify(user=serialized)
-
 
 ##############################################################################
 # Listings
@@ -128,7 +125,6 @@ def post_listings():
 
         return jsonify(listing=listing.serialize())
     except KeyError as e:
-        print("keyerror>>>>>>", e)
         return jsonify({"error": f"Missing {str(e)}"})
 
 
@@ -141,7 +137,6 @@ def upload_image(id):
     Accepts file: image_url
     """
 
-    print('inside listing post<<<<<<<<')
     username = get_jwt_identity()
     user = User.query.get_or_404(username)
     listing = Listing.query.get_or_404(id)
@@ -156,7 +151,6 @@ def upload_image(id):
         listing.image_url = output
         db.session.commit()
         response = jsonify({"success": "image uploaded"})
-        # response.headers.add('Access-Control-Allow-Origin', '*')
         return response
 
 @app.get('/users/listings')
@@ -183,12 +177,8 @@ def get_listings():
     else:
         listings = Listing.query.all()
 
-    print(listings)
     serialized = [listing.serialize() for listing in listings]
     return jsonify(listing=serialized)
-
-
-
 
 @app.get('/listings/<int:id>')
 def get_listing(id):
@@ -202,12 +192,12 @@ def get_listing(id):
 # Messages
 # POST /messages/new -- accepts {message,  recipient_id}
 #  backend provide message_id, timestamp, from_id , recipient_id
+
 @app.post('/messages')
 @jwt_required()
 def post_message():
-    """ Post new message to another user.
+    """ Post new message to another user. Accepts json {message, toUsername} """
 
-    Accepts json {message, toUsername} """
     username = get_jwt_identity()
     user = User.query.get(username)
 
@@ -223,15 +213,4 @@ def post_message():
 
         return jsonify(message=message.serialize())
     except KeyError as e:
-        print("keyerror>>>>>>", e)
         return jsonify({"error": f"Missing {str(e)}"})
-
-    # TODO:
-    # username = get_jwt_identity()
-    # user = User.query.get_or_404(username)
-    # text = request.json["text"]
-    # to_username = request.json["to_username"]
-    # message = Message(text=text)
-    # db.session.add(message)
-
-    # user.messages_sent.append()

@@ -1,9 +1,5 @@
 """ SQLAlchemy models for ShareB&B."""
 
-from cgitb import text
-from datetime import datetime
-from email import message
-
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity,JWTManager
@@ -173,10 +169,10 @@ class Message(db.Model):
         db.Text,
         primary_key=True,
     )
-    
+
     def __repr__(self):
         return f'< Message  #{self.id}: {self.text}, ${self.recipient_id} >'
-    
+
     @classmethod
     def new(cls, message, recipient):
         """ Creates and returns new message """
@@ -188,10 +184,10 @@ class Message(db.Model):
 
         db.session.add(message)
         return message
-    
+
     def serialize(self):
         """"Serialize"""
-        
+
         return {
             "message":self.text,
             "recipient":self.recipient_id
